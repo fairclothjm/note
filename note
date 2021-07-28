@@ -29,7 +29,7 @@ new() {
 }
 
 list() {
-  ls -1
+  ls -1 "$@"
 }
 
 find() {
@@ -49,6 +49,7 @@ case "$1" in
     new "$@"
     ;;
   list|ls|l)
+    shift ;
     list "$@"
     ;;
   find|f)
