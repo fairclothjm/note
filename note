@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 NOTE_DIR="/Users/$USER/notes"
+NOTE_TEMP_DIR="/tmp/note.list"
 
 usage() {
   echo
@@ -8,7 +9,9 @@ usage() {
   printf "commands:"
   printf "\n\tnew\t\tCreate a new note"
   printf "\n\tlist\t\tList notes"
-  echo
+  printf "\n\tfind\t\tFind notes"
+  printf "\n\tedit\t\tEdit notes located by \"find\""
+  printf "\n\n"
   exit 0
 }
 
@@ -26,8 +29,19 @@ new() {
 }
 
 list() {
-  ls -1 "$NOTE_DIR"
+  ls -1
 }
+
+find() {
+  grep -ri "$@" "$NOTE_DIR"
+  grep -rni "$@" "$NOTE_DIR" > "$NOTE_TEMP_DIR"
+}
+
+edit() {
+  $EDITOR -q "$NOTE_TEMP_DIR"
+}
+
+cd "$NOTE_DIR"
 
 case "$1" in
   new|n)
@@ -36,6 +50,13 @@ case "$1" in
     ;;
   list|ls|l)
     list "$@"
+    ;;
+  find|f)
+    shift ;
+    find "$@"
+    ;;
+  edit|ed|e)
+    edit
     ;;
   *)
     usage
