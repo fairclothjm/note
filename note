@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+NOTE_DIR="/Users/$USER/notes"
+
+usage() {
+  echo
+  echo "usage: note <command> [<args>]"
+  printf "commands:"
+  printf "\n\tnew\t\tCreate a new note"
+  printf "\n\tlist\t\tList notes"
+  echo
+  exit 0
+}
+
+exit_arg_err() {
+  usage
+  exit 1
+}
+
+new() {
+  local new_file
+
+  new_file="$(date +"%m-%d-%Y").txt"
+  touch "$new_file"
+  $EDITOR "$new_file"
+}
+
+list() {
+  ls -1 "$NOTE_DIR"
+}
+
+case "$1" in
+  new|n)
+    shift ;
+    new "$@"
+    ;;
+  list|ls|l)
+    list "$@"
+    ;;
+  *)
+    usage
+    ;;
+esac
+
+exit 0
