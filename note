@@ -22,11 +22,19 @@ exit_arg_err() {
 
 new() {
   local filename
-  local dir
-  dir="$1"
+  local filepath
+  local dirpath
+
+  if [[ -z "$1" ]] && [[ -d "$NOTE_DIR/misc" ]]; then
+    dirpath="$NOTE_DIR/misc"
+  elif [[ -z "$1" ]]; then
+    dirpath="$NOTE_DIR"
+  else
+    dirpath="$NOTE_DIR/$1"
+  fi
 
   filename="$(date +"%m-%d-%Y").txt"
-  filepath="$NOTE_DIR/$1/$filename"
+  filepath="$dirpath/$filename"
   touch "$filepath"
   $EDITOR "$filepath"
 }
