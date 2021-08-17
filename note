@@ -21,11 +21,14 @@ exit_arg_err() {
 }
 
 new() {
-  local new_file
+  local filename
+  local dir
+  dir="$1"
 
-  new_file="$(date +"%m-%d-%Y").txt"
-  touch "$new_file"
-  $EDITOR "$new_file"
+  filename="$(date +"%m-%d-%Y").txt"
+  filepath="$NOTE_DIR/$1/$filename"
+  touch "$filepath"
+  $EDITOR "$filepath"
 }
 
 list() {
