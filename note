@@ -21,9 +21,9 @@ exit_arg_err() {
 }
 
 new() {
+  local dirpath
   local filename
   local filepath
-  local dirpath
 
   if [[ -z "$1" ]] && [[ -d "$NOTE_DIR/misc" ]]; then
     dirpath="$NOTE_DIR/misc"
@@ -31,9 +31,15 @@ new() {
     dirpath="$NOTE_DIR"
   else
     dirpath="$NOTE_DIR/$1"
+    [[ -d "$dirpath" ]] || mkdir -p "$dirpath"
   fi
 
-  filename="$(date +"%m-%d-%Y").txt"
+  if [[ -z "$2" ]]; then
+    filename="$(date +"%m-%d-%Y").txt"
+  else
+    filename="$2"
+  fi
+
   filepath="$dirpath/$filename"
   touch "$filepath"
   $EDITOR "$filepath"
@@ -50,6 +56,24 @@ find() {
 
 edit() {
   $EDITOR -q "$NOTE_TEMP_DIR"
+}
+
+help() {
+  case "$1" in
+    new|n)
+      echo
+      echo "usage: note new [<args>]"
+      printf "commands:"
+      printf "\n\tnote new\t\tCreate a new note in the \"misc\" dir"
+      printf "\n\tnote new dir\t\tCreate a new note in an existing dir"
+      printf "\n\tnote new dir name\tCreate a new note in an existing dir with \"name\""
+      echo
+      ;;
+    *)
+      usage
+      ;;
+  esac
+
 }
 
 cd "$NOTE_DIR"
@@ -69,6 +93,10 @@ case "$1" in
     ;;
   edit|ed|e)
     edit
+    ;;
+  help|h)
+    shift ;
+    help "$@"
     ;;
   *)
     usage
