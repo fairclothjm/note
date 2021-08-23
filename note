@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 NOTE_DIR="/Users/$USER/notes"
-NOTE_TEMP_DIR="/tmp/note.list"
+NOTE_TEMP_PATH="/tmp/note.list"
 
 usage() {
   echo
@@ -10,7 +10,7 @@ usage() {
   printf "\n\tnew\t\tCreate a new note"
   printf "\n\tlist\t\tList notes"
   printf "\n\tfind\t\tFind notes"
-  printf "\n\tedit\t\tEdit notes located by \"find\""
+  printf "\n\tedit\t\tEdit recent note or those located by \"find\""
   printf "\n\n"
   exit 0
 }
@@ -49,24 +49,42 @@ list() {
   ls -1 "$@"
 }
 
-find() {
+_find() {
   grep -ri "$@" "$NOTE_DIR"
-  grep -rni "$@" "$NOTE_DIR" > "$NOTE_TEMP_DIR"
+  grep -rni "$@" "$NOTE_DIR" > "$NOTE_TEMP_PATH"
 }
 
 edit() {
-  $EDITOR -q "$NOTE_TEMP_DIR"
+  case "$@" in
+    last)
+      lastfile=$(find "$NOTE_DIR" -type f -print0 | xargs -0 stat -f "%m %N" | sort -rn | head -1 | cut -f2- -d" ")
+      echo "$lastfile"
+      $EDITOR "$lastfile"
+      return
+  esac
+
+  [ -f "$NOTE_TEMP_PATH" ] && $EDITOR -q "$NOTE_TEMP_PATH" || usage
 }
 
 help() {
-  case "$1" in
-    new|n)
+  header() {
       echo
       echo "usage: note new [<args>]"
       printf "commands:"
+  }
+
+  case "$1" in
+    new|n)
+      header
       printf "\n\tnote new\t\tCreate a new note in the \"misc\" dir"
-      printf "\n\tnote new dir\t\tCreate a new note in an existing dir"
-      printf "\n\tnote new dir name\tCreate a new note in an existing dir with \"name\""
+      printf "\n\tnote new DIR\t\tCreate a new note in an existing dir"
+      printf "\n\tnote new DIR NAME\tCreate a new note in an existing dir with \"NAME\""
+      echo
+      ;;
+    edit|ed|e)
+      header
+      printf "\n\tnote edit\t\tEdit notes located by \"find\""
+      printf "\n\tnote edit last\t\tEdit most recently edited note"
       echo
       ;;
     *)
@@ -89,10 +107,11 @@ case "$1" in
     ;;
   find|f)
     shift ;
-    find "$@"
+    _find "$@"
     ;;
   edit|ed|e)
-    edit
+    shift ;
+    edit "$@"
     ;;
   help|h)
     shift ;
