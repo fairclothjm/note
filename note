@@ -7,10 +7,11 @@ usage() {
   echo
   echo "usage: note <command> [<args>]"
   printf "commands:"
-  printf "\n\tnew\t\tCreate a new note"
-  printf "\n\tlist\t\tList notes"
-  printf "\n\tfind\t\tFind notes"
   printf "\n\tedit\t\tEdit recent note or those located by \"find\""
+  printf "\n\tfind\t\tFind notes"
+  printf "\n\tlist\t\tList notes"
+  printf "\n\tnew\t\tCreate a new note"
+  printf "\n\topen\t\tOpen notes dir in EDITOR"
   printf "\n\n"
   exit 0
 }
@@ -94,24 +95,31 @@ help() {
 
 }
 
+_open() {
+  $EDITOR "$NOTE_DIR"
+}
+
 cd "$NOTE_DIR"
 
 case "$1" in
-  new|n)
+  edit|ed|e)
     shift ;
-    new "$@"
-    ;;
-  list|ls|l)
-    shift ;
-    list "$@"
+    edit "$@"
     ;;
   find|f)
     shift ;
     _find "$@"
     ;;
-  edit|ed|e)
+  list|ls|l)
     shift ;
-    edit "$@"
+    list "$@"
+    ;;
+  new|n)
+    shift ;
+    new "$@"
+    ;;
+  open|o)
+    _open
     ;;
   help|h)
     shift ;
