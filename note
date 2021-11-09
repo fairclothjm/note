@@ -5,13 +5,15 @@ NOTE_TEMP_PATH="/tmp/note.list"
 
 usage() {
   echo
-  echo "usage: note <command> [<args>]"
+  echo "usage: note <command> [args]"
   printf "commands:"
   printf "\n\tedit\t\tEdit recent note or those located by \"find\""
   printf "\n\tfind\t\tFind notes"
   printf "\n\tlist\t\tList notes"
   printf "\n\tnew\t\tCreate a new note"
   printf "\n\topen\t\tOpen notes dir in EDITOR"
+  printf "\n\n"
+  printf "Use \"note help <command>\" for more information about a command."
   printf "\n\n"
   exit 0
 }
@@ -69,9 +71,8 @@ edit() {
 
 help() {
   header() {
-      echo
-      echo "usage: note new [<args>]"
-      printf "commands:"
+      printf "\nusage: note new [args]\n"
+      printf "\ncommands:"
   }
 
   case "$1" in
@@ -80,19 +81,18 @@ help() {
       printf "\n\tnote new\t\tCreate a new note in the \"misc\" dir"
       printf "\n\tnote new DIR\t\tCreate a new note in an existing dir"
       printf "\n\tnote new DIR NAME\tCreate a new note in an existing dir with \"NAME\""
-      echo
       ;;
     edit|ed|e)
       header
       printf "\n\tnote edit\t\tEdit notes located by \"find\""
       printf "\n\tnote edit last\t\tEdit most recently edited note"
-      echo
       ;;
     *)
       usage
       ;;
   esac
 
+  printf "\n\n"
 }
 
 _open() {
