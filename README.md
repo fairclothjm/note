@@ -1,6 +1,8 @@
 # note
 
-A simple note taking cli app
+A simple note taking cli app.
+
+Currently this is tightly coupled with vim. There are no plans to change that.
 
 ## Usage
 

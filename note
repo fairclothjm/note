@@ -58,29 +58,43 @@ _find() {
 }
 
 edit() {
-  case "$@" in
+  case "$1" in
     last)
-      lastfile=$(find "$NOTE_DIR" -type f -print0 | xargs -0 stat -f "%m %N" | sort -rn | head -1 | cut -f2- -d" ")
+      # find the last edited file
+      local lastfile=$(find "$NOTE_DIR" -type f -print0 | xargs -0 stat -f "%m %N" | sort -rn | head -1 | cut -f2- -d" ")
       echo "$lastfile"
       $EDITOR "$lastfile"
       return
+      ;;
+    *)
+      if [[ -n "$1" ]]; then
+        # unrecognized command
+        # TODO(JM): in this case can we execute _find?
+        _help edit
+        exit 1
+      fi
+      ;;
   esac
 
   [ -f "$NOTE_TEMP_PATH" ] && $EDITOR -q "$NOTE_TEMP_PATH" || usage
 }
 
-help() {
+# _help will print the help for the first arg ($1) it receives. It does not exit
+# so any call to the func should call exit afterwards with the appropriate exit
+# code.
+_help() {
+  local command="$1"
   header() {
-      printf "\nusage: note new [args]\n"
+      printf "\nusage: note $command [command]\n"
       printf "\ncommands:"
   }
 
-  case "$1" in
+  case "$command" in
     new|n)
       header
       printf "\n\tnote new\t\tCreate a new note in the \"misc\" dir"
-      printf "\n\tnote new DIR\t\tCreate a new note in an existing dir"
-      printf "\n\tnote new DIR NAME\tCreate a new note in an existing dir with \"NAME\""
+      printf "\n\tnote new DIR\t\tCreate a new note in a new or existing dir"
+      printf "\n\tnote new DIR NAME\tCreate a new note in a new or existing dir with \"NAME\""
       ;;
     edit|ed|e)
       header
@@ -123,7 +137,7 @@ case "$1" in
     ;;
   help|h)
     shift ;
-    help "$@"
+    _help "$@"
     ;;
   *)
     usage
