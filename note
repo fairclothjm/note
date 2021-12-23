@@ -3,6 +3,8 @@
 NOTE_DIR="$HOME/notes"
 NOTE_TEMP_PATH="/tmp/note.list"
 
+[[ -d $NOTE_DIR ]] || mkdir -p $NOTE_DIR
+
 usage() {
   echo
   echo "usage: note <command> [args]"
