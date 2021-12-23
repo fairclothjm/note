@@ -1,21 +1,26 @@
 #!/usr/bin/env bash
 
-NOTE_DIR="/Users/$USER/notes"
+NOTE_DIR="$HOME/notes"
 NOTE_TEMP_PATH="/tmp/note.list"
 
 usage() {
   echo
   echo "usage: note <command> [args]"
-  printf "commands:"
-  printf "\n\tedit\t\tEdit recent note or those located by \"find\""
-  printf "\n\tfind\t\tFind notes"
-  printf "\n\tlist\t\tList notes"
-  printf "\n\tnew\t\tCreate a new note"
-  printf "\n\topen\t\tOpen notes dir in EDITOR"
+  echo
+  echo "commands:"
+  printf "\t%-10s %s\n" "edit" "Edit recent note or those located by \"find\""
+  printf "\t%-10s %s\n" "find" "Find notes"
+  printf "\t%-10s %s\n" "list" "List notes"
+  printf "\t%-10s %s\n" "new" "Create a new note"
+  printf "\t%-10s %s\n" "open" "Open notes dir in \$EDITOR"
   printf "\n\n"
   printf "Use \"note help <command>\" for more information about a command."
   printf "\n\n"
-  exit 0
+}
+
+# log_err sends an error message to stderr
+log_err() {
+  echo "[error]: $@" >&2
 }
 
 exit_arg_err() {
@@ -85,21 +90,21 @@ edit() {
 _help() {
   local command="$1"
   header() {
-      printf "\nusage: note $command [command]\n"
-      printf "\ncommands:"
+      printf "\nusage: note $command [command]\n\n"
+      echo "commands:"
   }
 
   case "$command" in
     new|n)
       header
-      printf "\n\tnote new\t\tCreate a new note in the \"misc\" dir"
-      printf "\n\tnote new DIR\t\tCreate a new note in a new or existing dir"
-      printf "\n\tnote new DIR NAME\tCreate a new note in a new or existing dir with \"NAME\""
+      printf "\t%-22s %s\n" "note new" "Create a new note in the \"misc\" dir"
+      printf "\t%-22s %s\n" "note new DIR" "Create a new note in a new or existing dir"
+      printf "\t%-22s %s\n" "note new DIR name" "Create a new note in a new or existing dir with \"NAME\""
       ;;
     edit|ed|e)
       header
-      printf "\n\tnote edit\t\tEdit notes located by \"find\""
-      printf "\n\tnote edit last\t\tEdit most recently edited note"
+      printf "\t%-22s %s\n" "note edit" "Edit notes located by \"find\""
+      printf "\t%-22s %s\n" "note edit last" "Edit most recently edited note"
       ;;
     *)
       usage
@@ -112,6 +117,11 @@ _help() {
 _open() {
   $EDITOR "$NOTE_DIR"
 }
+
+
+if [[ $# -ne 1 ]]; then
+  exit_arg_err
+fi
 
 cd "$NOTE_DIR"
 
@@ -140,7 +150,8 @@ case "$1" in
     _help "$@"
     ;;
   *)
-    usage
+    log_err "unknown arguments:" "$@"
+    exit_arg_err
     ;;
 esac
 
